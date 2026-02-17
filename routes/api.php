@@ -3,16 +3,15 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
 
 // public routes
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/logout', [UserController::class, 'logout']);
-Route::get('/user', [UserController::class, 'user']);
+Route::post('/auth/login', [UserController::class, 'login']);
+Route::post('/auth/register', [UserController::class, 'register']);
+Route::post('/auth/logout', [UserController::class, 'logout']);
+Route::get('/auth/user', [UserController::class, 'user']);
 
 
 
@@ -25,4 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);
+    Route::put('/categories/{id}', [CategoryController::class, 'update']);
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+
+
+    Route::get('/reports', [ExpenseController::class, 'generateReport']);
 });

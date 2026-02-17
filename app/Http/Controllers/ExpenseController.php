@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreExpenseRequest;
 use App\Models\Expense;
+use App\Services\ExpenseService;
 use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
@@ -51,5 +52,12 @@ class ExpenseController extends Controller
         $expense->delete();
 
         return response()->json(['message' => 'Expense deleted']);
+    }
+
+    public function monthlyExpenses(Request $request)
+    {
+        $report = (new ExpenseService())->generateMonthlyExpensesReport($request->user());
+
+        return response()->json($report);
     }
 }
