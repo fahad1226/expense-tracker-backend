@@ -10,10 +10,19 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user()
+        $categories = $request->user()
             ->categories()
+            ->withCount('expenses')
+            ->withSum('expenses', 'amount')
             ->latest()
             ->get();
+
+        $totalAmountSpent = $request->user()->expenses()->sum('amount');
+
+        return response()->json([
+            'categories' => $categories,
+            'total_amount_spent' => (float) $totalAmountSpent,
+        ]);
     }
 
     public function store(StoreCategoryRequest $request)

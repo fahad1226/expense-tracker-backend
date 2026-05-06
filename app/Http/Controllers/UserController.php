@@ -23,7 +23,11 @@ class UserController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json(['message' => 'Login successful', 'token' => $token], 200);
+        return response()->json([
+            'message' => 'Login successful',
+            'token' => $token,
+            'user' => $user->fresh()->toSummaryArray(),
+        ], 200);
     }
 
     public function logout(Request $request)
@@ -41,17 +45,22 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'Register successful'], 200);
+        return response()->json([
+            'message' => 'Register successful',
+            'user' => $user->toSummaryArray(),
+        ], 201);
     }
 
     public function user(Request $request)
     {
-        return response()->json(['user' => $request->user()], 200);
+        return response()->json([
+            'user' => $request->user()->toSummaryArray(),
+        ], 200);
     }
 }
