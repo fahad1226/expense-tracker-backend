@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\SupportContactController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExpenseController;
@@ -7,6 +8,9 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/support/contact', [SupportContactController::class, 'store'])
+    ->middleware('throttle:30,1');
 
 // public routes
 Route::post('/auth/login', [UserController::class, 'login']);
@@ -34,12 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/budgets', [BudgetController::class, 'show']);
     Route::put('/budgets', [BudgetController::class, 'upsert']);
 
-
     Route::get('/settings', [SettingsController::class, 'show']);
     Route::patch('/settings', [SettingsController::class, 'update']);
     Route::put('/settings/password', [SettingsController::class, 'updatePassword']);
 
-    //logout
+    // logout
 
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });

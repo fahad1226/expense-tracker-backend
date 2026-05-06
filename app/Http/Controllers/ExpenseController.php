@@ -14,11 +14,13 @@ class ExpenseController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = min(max((int) $request->query('per_page', 15), 1), 50);
+
         $expenses = $request->user()
             ->expenses()
-            ->with('category:id,name')
+            ->with('category:id,name,icon')
             ->latest()
-            ->get();
+            ->paginate($perPage);
 
         return ExpenseResource::collection($expenses);
     }

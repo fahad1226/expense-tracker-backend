@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'currency',
+        'is_admin',
     ];
 
     /**
@@ -45,15 +46,14 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
-
 
     public function expenses()
     {
         return $this->hasMany(Expense::class);
     }
-
 
     public function categories()
     {
@@ -66,6 +66,19 @@ class User extends Authenticatable
     public function budgets()
     {
         return $this->hasMany(Budget::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<SupportTicket, $this>
+     */
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
     }
 
     /**

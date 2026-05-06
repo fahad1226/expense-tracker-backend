@@ -23,5 +23,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(ExpenseSeeder::class);
+
+        if ($email = env('ADMIN_EMAIL')) {
+            User::query()->updateOrCreate(
+                ['email' => $email],
+                [
+                    'name' => env('ADMIN_NAME', 'Administrator'),
+                    'password' => \Illuminate\Support\Facades\Hash::make((string) env('ADMIN_PASSWORD', 'password')),
+                    'is_admin' => true,
+                    'currency' => 'BDT',
+                ],
+            );
+        }
     }
 }
