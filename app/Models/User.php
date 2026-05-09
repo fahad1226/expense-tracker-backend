@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -21,6 +22,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'google_id',
         'password',
         'currency',
         'is_admin',
@@ -81,8 +83,17 @@ class User extends Authenticatable
         return (bool) $this->is_admin;
     }
 
+    public function avatarPublicUrl(): ?string
+    {
+        if ($this->avatar_path === null || $this->avatar_path === '') {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->avatar_path);
+    }
+
     /**
-     * @return array{id: int, name: string, email: string, currency: string}
+     * @return array{id: int, name: string, email: string, currency: string, avatar_url: string|null}
      */
     public function toSummaryArray(): array
     {
@@ -91,6 +102,7 @@ class User extends Authenticatable
             'name' => $this->name,
             'email' => $this->email,
             'currency' => $this->currency ?? 'BDT',
+            'avatar_url' => $this->avatarPublicUrl(),
         ];
     }
 }

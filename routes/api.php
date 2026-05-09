@@ -4,24 +4,27 @@ use App\Http\Controllers\Api\SupportContactController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/support/contact', [SupportContactController::class, 'store'])
-    ->middleware('throttle:30,1');
+// The 'throttle:30,1' middleware limits this endpoint to 30 requests per minute per IP (rate limiter).
+Route::post('/support/contact', [SupportContactController::class, 'store'])->middleware('throttle:30,1');
 
 // public routes
 Route::post('/auth/login', [UserController::class, 'login']);
 Route::post('/auth/register', [UserController::class, 'register']);
-Route::get('/auth/user', [UserController::class, 'user']);
+
+Route::post('/auth/google', GoogleAuthController::class)->middleware('throttle:20,1');
 
 // protected routes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/auth/user', [UserController::class, 'user']);
     Route::get('/dashboard', [ExpenseController::class, 'dashboard']);
     Route::get('/analytics', [ExpenseController::class, 'analytics']);
-    // Route::get('/monthly-expenses', [ExpenseController::class, 'monthlyExpenses']);
+
     Route::get('/expenses', [ExpenseController::class, 'index']);
     Route::post('/expenses', [ExpenseController::class, 'store']);
     Route::put('/expenses/{id}', [ExpenseController::class, 'update']);
@@ -40,9 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/settings', [SettingsController::class, 'show']);
     Route::patch('/settings', [SettingsController::class, 'update']);
+    Route::post('/settings/avatar', [SettingsController::class, 'uploadAvatar']);
+    Route::delete('/settings/avatar', [SettingsController::class, 'destroyAvatar']);
     Route::put('/settings/password', [SettingsController::class, 'updatePassword']);
-
-    // logout
 
     Route::post('/auth/logout', [UserController::class, 'logout']);
 });
